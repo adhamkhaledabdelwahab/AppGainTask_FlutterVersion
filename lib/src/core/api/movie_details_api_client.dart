@@ -3,9 +3,9 @@ import 'dart:isolate';
 
 import 'package:appgaintask/src/core/api/credencials.dart';
 import 'package:appgaintask/src/core/api/service.dart';
+import 'package:appgaintask/src/core/app_executors.dart';
 import 'package:appgaintask/src/core/log_util.dart';
 import 'package:appgaintask/src/model/models/movie_model.dart';
-import 'package:easy_debounce/easy_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -13,6 +13,7 @@ late final ValueNotifier<MovieModel?> _mMovieDetails;
 
 class MovieDetailsApiClient {
   static MovieDetailsApiClient? _instance;
+  late AppExecutors _appExecutors;
 
   static MovieDetailsApiClient getInstance() {
     _instance ??= MovieDetailsApiClient._();
@@ -21,6 +22,7 @@ class MovieDetailsApiClient {
 
   MovieDetailsApiClient._() {
     _mMovieDetails = ValueNotifier<MovieModel?>(null);
+    _appExecutors = AppExecutors();
   }
 
   ValueNotifier<MovieModel?> getMovieDetails() {
@@ -34,11 +36,7 @@ class MovieDetailsApiClient {
 
     _retrieveMovieDetailsRunnable = _RetrieveMovieDetailsRunnable(id);
 
-    EasyThrottle.throttle(
-      'MovieDetails',
-      const Duration(milliseconds: 5000),
-          () => _retrieveMovieDetailsRunnable?.run(),
-    );
+    _appExecutors.execute(() => _retrieveMovieDetailsRunnable?.run());
   }
 
   _RetrieveMovieDetailsRunnable? _retrieveMovieDetailsRunnable;

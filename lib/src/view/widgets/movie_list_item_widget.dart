@@ -28,7 +28,7 @@ class MovieListItemWidget extends StatelessWidget {
           ),
           clipBehavior: Clip.antiAlias,
           width: MediaQuery.sizeOf(context).width * 0.7,
-          child: InkWell(
+          child: GestureDetector(
             onTap: () {
               Navigator.pushNamed(
                 context,
@@ -66,7 +66,7 @@ class MovieListItemWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        movie.title,
+                        movie.title ?? "",
                         style: const TextStyle(
                           fontFamily: "serif",
                           fontSize: 25,
@@ -78,12 +78,14 @@ class MovieListItemWidget extends StatelessWidget {
                         padding: const EdgeInsets.all(10.0),
                         child: RatingBarIndicator(
                           itemCount: 5,
-                          itemSize: 35,
-                          rating: movie.vote_average,
-                          unratedColor: Colors.grey,
-                          itemBuilder: (_, index) => const Icon(
+                          itemSize: 40,
+                          rating: movie.vote_average != null
+                              ? movie.vote_average! / 2
+                              : 0,
+                          unratedColor: Colors.grey.shade700,
+                          itemBuilder: (_, index) => Icon(
                             Icons.star,
-                            color: Colors.yellow,
+                            color: Colors.tealAccent.shade700,
                           ),
                         ),
                       )

@@ -2,7 +2,6 @@ import 'package:appgaintask/src/core/api/credencials.dart';
 import 'package:appgaintask/src/model/models/movie_model.dart';
 import 'package:appgaintask/src/model/response/movie_search_response.dart';
 import 'package:dio/dio.dart';
-import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'movie_api.g.dart';

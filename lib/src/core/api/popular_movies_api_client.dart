@@ -3,10 +3,10 @@ import 'dart:isolate';
 
 import 'package:appgaintask/src/core/api/credencials.dart';
 import 'package:appgaintask/src/core/api/service.dart';
+import 'package:appgaintask/src/core/app_executors.dart';
 import 'package:appgaintask/src/core/log_util.dart';
 import 'package:appgaintask/src/model/models/movie_model.dart';
 import 'package:appgaintask/src/model/response/movie_search_response.dart';
-import 'package:easy_debounce/easy_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -14,6 +14,7 @@ late final ValueNotifier<List<MovieModel>> _mMoviesPop;
 
 class PopularMoviesApiClient {
   static PopularMoviesApiClient? _instance;
+  late AppExecutors _appExecutors;
 
   static PopularMoviesApiClient getInstance() {
     _instance ??= PopularMoviesApiClient._();
@@ -22,6 +23,7 @@ class PopularMoviesApiClient {
 
   PopularMoviesApiClient._() {
     _mMoviesPop = ValueNotifier<List<MovieModel>>([]);
+    _appExecutors = AppExecutors();
   }
 
   ValueNotifier<List<MovieModel>> getMovieDetails() {
@@ -34,11 +36,7 @@ class PopularMoviesApiClient {
     }
 
     _retrievePopularMoviesRunnable = _RetrievePopularMoviesRunnable(pageNumber);
-    EasyThrottle.throttle(
-      'PopularMovies',
-      const Duration(milliseconds: 5000),
-      () => _retrievePopularMoviesRunnable?.run(),
-    );
+    _appExecutors.execute(() => _retrievePopularMoviesRunnable?.run());
   }
 
   _RetrievePopularMoviesRunnable? _retrievePopularMoviesRunnable;

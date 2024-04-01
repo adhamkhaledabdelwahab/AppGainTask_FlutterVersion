@@ -2,15 +2,14 @@
 
 import 'package:appgaintask/src/model/models/movie_model.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:retrofit/retrofit.dart';
 
 part 'movie_search_response.g.dart';
 
 @JsonSerializable()
 class MovieSearchResponse {
-  final int page;
+  final int? page;
 
-  final List<MovieModel> results;
+  final List<MovieModel>? results;
 
   MovieSearchResponse({required this.page, required this.results});
 

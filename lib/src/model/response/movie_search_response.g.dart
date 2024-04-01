@@ -8,9 +8,9 @@ part of 'movie_search_response.dart';
 
 MovieSearchResponse _$MovieSearchResponseFromJson(Map<String, dynamic> json) =>
     MovieSearchResponse(
-      page: json['page'] as int,
-      results: (json['results'] as List<dynamic>)
-          .map((e) => MovieModel.fromJson(e as Map<String, dynamic>))
+      page: json['page'] as int?,
+      results: (json['results'] as List<dynamic>?)
+          ?.map((e) => MovieModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

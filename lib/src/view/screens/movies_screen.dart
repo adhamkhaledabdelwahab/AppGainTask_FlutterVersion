@@ -1,7 +1,8 @@
+import 'package:appgaintask/src/core/app_router.dart';
 import 'package:appgaintask/src/core/assets.dart';
-import 'package:appgaintask/src/model/models/movie_model.dart';
 import 'package:appgaintask/src/view/widgets/movie_list_item_widget.dart';
-import 'package:appgaintask/src/view_model/movie_Llst_view_model.dart';
+import 'package:appgaintask/src/view_model/movie_List_view_model.dart';
+import 'package:appgaintask/src/view_model/network_view_model.dart';
 import 'package:flutter/material.dart';
 
 class MoviesScreen extends StatefulWidget {
@@ -14,6 +15,8 @@ class MoviesScreen extends StatefulWidget {
 class _MoviesScreenState extends State<MoviesScreen> {
   late final MovieListViewModel _viewModel;
   late final ScrollController _scrollController;
+  late final NetworkViewModel _networkViewModel;
+  var _navigationStart = false;
 
   @override
   void initState() {
@@ -26,7 +29,27 @@ class _MoviesScreenState extends State<MoviesScreen> {
         _viewModel.searchNextPagePopular();
       }
     });
+    _networkViewModel = NetworkViewModel();
+    _networkViewModel.registerNetworkStateObserver();
+    _networkViewModel.getConnected().addListener(() {
+      final connected = _networkViewModel.getConnected().value;
+      if (!connected) {
+        if (!_navigationStart) {
+          Navigator.pushReplacementNamed(
+            context,
+            AppRouter.rNoInternetConnection,
+          );
+          _navigationStart = true;
+        }
+      }
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _networkViewModel.dispose();
+    super.dispose();
   }
 
   @override

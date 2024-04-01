@@ -5,14 +5,14 @@ part 'movie_model.g.dart';
 
 @JsonSerializable()
 class MovieModel {
-  final String title;
-  final String poster_path;
-  final String backdrop_path;
-  final String release_date;
-  final int id;
-  final double vote_average;
-  final String overview;
-  final String original_language;
+  final String? title;
+  final String? poster_path;
+  final String? backdrop_path;
+  final String? release_date;
+  final int? id;
+  final double? vote_average;
+  final String? overview;
+  final String? original_language;
 
   MovieModel({
     required this.title,

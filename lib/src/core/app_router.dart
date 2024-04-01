@@ -1,6 +1,6 @@
 import 'package:appgaintask/src/model/models/movie_model.dart';
-import 'package:appgaintask/src/view/screens/movies_screen.dart';
 import 'package:appgaintask/src/view/screens/movie_details_screen.dart';
+import 'package:appgaintask/src/view/screens/movies_screen.dart';
 import 'package:appgaintask/src/view/screens/no_internet_screen.dart';
 import 'package:appgaintask/src/view/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +29,18 @@ class AppRouter {
           ),
         );
       case rNoInternetConnection:
+        int? movieId;
+        MovieModel? movie;
+        if (settings.arguments is MovieModel) {
+          movie = settings.arguments as MovieModel;
+        } else if (settings.arguments is int) {
+          movieId = settings.arguments as int;
+        }
         return MaterialPageRoute(
-          builder: (_) => const NoInternetScreen(),
+          builder: (_) => NoInternetScreen(
+            movie: movie,
+            movieId: movieId,
+          ),
         );
       default:
         return null;
