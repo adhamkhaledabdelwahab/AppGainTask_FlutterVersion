@@ -1,10 +1,18 @@
+import 'dart:async';
+import 'dart:isolate';
+
+import 'package:appgaintask/src/core/api/credencials.dart';
+import 'package:appgaintask/src/core/api/service.dart';
+import 'package:appgaintask/src/core/log_util.dart';
 import 'package:appgaintask/src/model/models/movie_model.dart';
+import 'package:easy_debounce/easy_throttle.dart';
 import 'package:flutter/material.dart';
+import 'package:retrofit/retrofit.dart';
+
+late final ValueNotifier<MovieModel?> _mMovieDetails;
 
 class MovieDetailsApiClient {
   static MovieDetailsApiClient? _instance;
-
-  late final ValueNotifier<MovieModel?> _mMovieDetails;
 
   static MovieDetailsApiClient getInstance() {
     _instance ??= MovieDetailsApiClient._();
@@ -26,14 +34,11 @@ class MovieDetailsApiClient {
 
     _retrieveMovieDetailsRunnable = _RetrieveMovieDetailsRunnable(id);
 
-    // final Future myHandler = AppExecutors
-    //     .getInstance()
-    //     .networkIO()
-    //     .submit(retrieveMovieDetailsRunnable);
-    //
-    // AppExecutors.getInstance().networkIO().schedule(() -> {
-    // myHandler.cancel(true);
-    // }, 5000, TimeUnit.MILLISECONDS);
+    EasyThrottle.throttle(
+      'MovieDetails',
+      const Duration(milliseconds: 5000),
+          () => _retrieveMovieDetailsRunnable?.run(),
+    );
   }
 
   _RetrieveMovieDetailsRunnable? _retrieveMovieDetailsRunnable;
@@ -41,49 +46,53 @@ class MovieDetailsApiClient {
 
 class _RetrieveMovieDetailsRunnable {
   late final int _movieId;
-  late bool cancelRequest;
+  late bool _cancelRequest;
 
   _RetrieveMovieDetailsRunnable(int id) {
     _movieId = id;
-    cancelRequest = false;
+    _cancelRequest = false;
   }
 
-  // @Override
-  // public void run() {
-  //   try {
-  //     Response<MovieModel> response = getMovieDetails(this.movieId).execute();
-  //     if (cancelRequest) {
-  //       return;
-  //     }
-  //     LogUtil.d("MovieDetails", "Headers: " + response.headers());
-  //     if (response.code() == 200) {
-  //       LogUtil.d("MovieDetails", "Response Body: " + response.body());
-  //       assert response.body() != null;
-  //       MovieModel movie = response.body();
-  //       mMovieDetails.postValue(movie);
-  //     } else {
-  //       LogUtil.d("MovieDetails", "Response Error: " + response.errorBody());
-  //       assert response.errorBody() != null;
-  //       String error = response.errorBody().string();
-  //   LogUtil.d("Tag", "Error " + error);
-  //   mMovieDetails.postValue(null);
-  //   }
-  //   } catch (IOException e) {
-  //   e.printStackTrace();
-  //   mMovieDetails.postValue(null);
-  //   }
-  //
-  //   if (cancelRequest) {
-  //   return;
-  //   }
-  // }
-  //
-  // private Call<MovieModel> getMovieDetails(int id) {
-  //   return Service.getMovieApi().getMovieById(id, Credentials.API_KEY);
-  // }
-  //
-  // private void cancelRequest() {
-  //   LogUtil.d("Tag", "Cancelling Search Request");
-  //   cancelRequest = true;
-  // }
+  Future<void> run() async {
+    try {
+      HttpResponse<MovieModel?> response =
+          await Isolate.run<HttpResponse<MovieModel?>>(
+        () => getMovieDetails(_movieId),
+      );
+      if (_cancelRequest) {
+        return;
+      }
+      LogUtil.d("MovieDetails", "Headers: ${response.response.headers}");
+      if (response.response.statusCode == 200) {
+        LogUtil.d("MovieDetails", "Response Body: ${response.data}");
+        if (response.data != null) {
+          MovieModel movie = response.data!;
+          _mMovieDetails.value = movie;
+        }
+      } else {
+        LogUtil.d("MovieDetails", "Response Error: ${response.response}");
+        if (response.response.statusMessage != null) {
+          String error = response.response.statusMessage!;
+          LogUtil.d("Tag", "Error $error");
+        }
+        _mMovieDetails.value = null;
+      }
+    } catch (e) {
+      debugPrintStack(stackTrace: e as StackTrace);
+      _mMovieDetails.value = null;
+    }
+
+    if (_cancelRequest) {
+      return;
+    }
+  }
+
+  Future<HttpResponse<MovieModel?>> getMovieDetails(int id) {
+    return Service.getMovieApi().getMovieById(id, Credentials.API_KEY);
+  }
+
+  void cancelRequest() {
+    LogUtil.d("Tag", "Cancelling Search Request");
+    _cancelRequest = true;
+  }
 }

@@ -8,8 +8,8 @@ part of 'movie_search_response.dart';
 
 MovieSearchResponse _$MovieSearchResponseFromJson(Map<String, dynamic> json) =>
     MovieSearchResponse(
-      total_count: json['total_count'] as int,
-      movies: (json['movies'] as List<dynamic>)
+      page: json['page'] as int,
+      results: (json['results'] as List<dynamic>)
           .map((e) => MovieModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
@@ -17,6 +17,6 @@ MovieSearchResponse _$MovieSearchResponseFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$MovieSearchResponseToJson(
         MovieSearchResponse instance) =>
     <String, dynamic>{
-      'total_count': instance.total_count,
-      'movies': instance.movies,
+      'page': instance.page,
+      'results': instance.results,
     };

@@ -2,22 +2,25 @@
 
 import 'package:appgaintask/src/model/models/movie_model.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:retrofit/retrofit.dart';
 
 part 'movie_search_response.g.dart';
 
 @JsonSerializable()
 class MovieSearchResponse {
-  final int total_count;
-  final List<MovieModel> movies;
+  final int page;
 
-  MovieSearchResponse({required this.total_count, required this.movies});
+  final List<MovieModel> results;
+
+  MovieSearchResponse({required this.page, required this.results});
 
   @override
   String toString() {
-    return '${"MovieSearchResponse{total_count=$total_count, movies=$movies"}}';
+    return '${"MovieSearchResponse{total_count=$page, movies=$results"}}';
   }
 
-  factory MovieSearchResponse.fromJson(Map<String, dynamic> json) => _$MovieSearchResponseFromJson(json);
+  factory MovieSearchResponse.fromJson(Map<String, dynamic> json) =>
+      _$MovieSearchResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$MovieSearchResponseToJson(this);
 }

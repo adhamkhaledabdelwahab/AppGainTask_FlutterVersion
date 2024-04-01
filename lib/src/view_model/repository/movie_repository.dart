@@ -1,28 +1,30 @@
+import 'package:appgaintask/src/core/api/popular_movies_api_client.dart';
+import 'package:appgaintask/src/model/models/movie_model.dart';
 import 'package:flutter/material.dart';
 
 class MovieRepository{
    static MovieRepository? instance;
 
-   final PopularMoviesApiClient popularMoviesApiClient;
+   late final PopularMoviesApiClient _popularMoviesApiClient;
 
-   int mPageNumber;
+   late int mPageNumber;
 
    static MovieRepository getInstance(){
-    instance ??= MovieRepository();
+    instance ??= MovieRepository._();
     return instance!;
   }
 
-   MovieRepository(){
-    popularMoviesApiClient = PopularMoviesApiClient.getInstance();
+   MovieRepository._(){
+     _popularMoviesApiClient = PopularMoviesApiClient.getInstance();
   }
 
    ValueNotifier<List<MovieModel>> getPopularMovies(){
-    return popularMoviesApiClient.getMoviesPop();
+    return _popularMoviesApiClient.getMovieDetails();
   }
 
    void searchPopularMoviesApi(int pageNumber){
     mPageNumber = pageNumber;
-    popularMoviesApiClient.searchPopularMoviesApi(pageNumber);
+    _popularMoviesApiClient.searchPopularMoviesApi(pageNumber);
   }
 
    void searchNextPagePopular(){

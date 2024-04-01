@@ -30,7 +30,8 @@ class MovieModel {
     return "MovieModel{title='$title\\, poster_path='$poster_path\\', backdrop_path='$backdrop_path\\', release_date='$release_date\\', movie_id=$id, vote_average=$vote_average, overview='$overview\\', original_language='$original_language\\'}";
   }
 
-  factory MovieModel.fromJson(Map<String, dynamic> json) => _$MovieModelFromJson(json);
+  factory MovieModel.fromJson(Map<String, dynamic> json) =>
+      _$MovieModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$MovieModelToJson(this);
 }

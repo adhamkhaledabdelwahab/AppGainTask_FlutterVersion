@@ -3,6 +3,7 @@ import 'package:appgaintask/src/model/models/movie_model.dart';
 import 'package:appgaintask/src/model/response/movie_search_response.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/http.dart';
+import 'package:retrofit/retrofit.dart';
 
 part 'movie_api.g.dart';
 
@@ -11,13 +12,13 @@ abstract class MovieApi {
   factory MovieApi(Dio dio, {String baseUrl}) = _MovieApi;
 
   @GET("3/movie/{movie_id}")
-  Future<MovieModel> getMovieById(
+  Future<HttpResponse<MovieModel?>> getMovieById(
     @Path("movie_id") int id,
     @Query("api_key") String key,
   );
 
   @GET("3/movie/popular")
-  Future<MovieSearchResponse> getPopularMovies(
+  Future<HttpResponse<MovieSearchResponse?>> getPopularMovies(
     @Query("api_key") String key,
     @Query("page") int page,
   );

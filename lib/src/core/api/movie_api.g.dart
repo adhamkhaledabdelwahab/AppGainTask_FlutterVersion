@@ -21,7 +21,7 @@ class _MovieApi implements MovieApi {
   String? baseUrl;
 
   @override
-  Future<MovieModel> getMovieById(
+  Future<HttpResponse<MovieModel?>> getMovieById(
     int id,
     String key,
   ) async {
@@ -29,8 +29,8 @@ class _MovieApi implements MovieApi {
     final queryParameters = <String, dynamic>{r'api_key': key};
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
-    final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<MovieModel>(Options(
+    final _result = await _dio.fetch<Map<String, dynamic>?>(
+        _setStreamType<HttpResponse<MovieModel>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -46,12 +46,14 @@ class _MovieApi implements MovieApi {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = MovieModel.fromJson(_result.data!);
-    return value;
+    final value =
+        _result.data == null ? null : MovieModel.fromJson(_result.data!);
+    final httpResponse = HttpResponse(value, _result);
+    return httpResponse;
   }
 
   @override
-  Future<MovieSearchResponse> getPopularMovies(
+  Future<HttpResponse<MovieSearchResponse?>> getPopularMovies(
     String key,
     int page,
   ) async {
@@ -62,8 +64,8 @@ class _MovieApi implements MovieApi {
     };
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<MovieSearchResponse>(Options(
+    final _result = await _dio.fetch<Map<String, dynamic>?>(
+        _setStreamType<HttpResponse<MovieSearchResponse>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -79,8 +81,11 @@ class _MovieApi implements MovieApi {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = MovieSearchResponse.fromJson(_result.data!);
-    return value;
+    final value = _result.data == null
+        ? null
+        : MovieSearchResponse.fromJson(_result.data!);
+    final httpResponse = HttpResponse(value, _result);
+    return httpResponse;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
