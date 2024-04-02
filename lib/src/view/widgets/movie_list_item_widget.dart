@@ -27,7 +27,7 @@ class MovieListItemWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(35),
           ),
           clipBehavior: Clip.antiAlias,
-          width: MediaQuery.sizeOf(context).width * 0.7,
+          width: MediaQuery.sizeOf(context).width * 0.75,
           child: GestureDetector(
             onTap: () {
               Navigator.pushNamed(

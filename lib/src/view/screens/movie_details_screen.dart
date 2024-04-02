@@ -117,8 +117,8 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
               ),
             ),
             Positioned(
-              top: 30,
-              left: 10,
+              top: kToolbarHeight/1.3,
+              left: 15,
               child: IconButton(
                 style: IconButton.styleFrom(
                     backgroundColor: Colors.black45,

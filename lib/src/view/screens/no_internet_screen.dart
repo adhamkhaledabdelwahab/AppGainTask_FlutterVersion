@@ -60,7 +60,7 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
         } else {
           final movieId = widget.movieId;
           if (movieId == null) {
-            navigate(AppRouter.rMovies);
+            Navigator.pushReplacementNamed(context, AppRouter.rMovies);
             _navigationStart = true;
           } else {
             MovieDetailsApiClient instance =
@@ -69,7 +69,12 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
               final movieModel = instance.getMovieDetails().value;
               if (!_navigationStart) {
                 if (movieModel != null) {
-                  navigate(AppRouter.rMovieDetails, movieModel);
+                  Navigator.of(context)
+                    ..pushReplacementNamed(AppRouter.rMovies)
+                    ..pushNamed(
+                      AppRouter.rMovieDetails,
+                      arguments: movieModel,
+                    );
                 } else {
                   Fluttertoast.showToast(
                     msg: "Invalid Movie ID",
@@ -96,34 +101,28 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
     }
   }
 
-  void navigate(String routeName, [MovieModel? movie]) =>
-      Future.delayed(const Duration(milliseconds: 500)).then(
-        (value) => Navigator.pushReplacementNamed(
-          context,
-          routeName,
-          arguments: movie,
-        ),
-      );
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-              AppAssets.imgBackground,
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(
+                AppAssets.imgBackground,
+              ),
+              fit: BoxFit.cover,
             ),
-            fit: BoxFit.cover,
           ),
-        ),
-        child: const Center(
-          child: Text(
-            "No Internet Connection, Reconnect to navigate back to home screen",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 48,
-              color: Colors.white,
+          child: const Center(
+            child: Text(
+              "No Internet Connection, Reconnect to navigate back to home screen",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 48,
+                color: Colors.white,
+              ),
             ),
           ),
         ),

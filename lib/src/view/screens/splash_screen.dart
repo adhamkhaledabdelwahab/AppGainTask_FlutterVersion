@@ -66,7 +66,9 @@ class _SplashScreenState extends State<SplashScreen>
         final movie = instance.getMovieDetails().value;
         if (!_navigationStart) {
           if (movie != null) {
-            navigate(AppRouter.rMovieDetails, movie: movie);
+            Navigator.of(context)
+              ..pushReplacementNamed(AppRouter.rMovies)
+              ..pushNamed(AppRouter.rMovieDetails, arguments: movie);
           } else {
             navigate(AppRouter.rMovies);
           }
@@ -122,7 +124,7 @@ class _SplashScreenState extends State<SplashScreen>
         ),
         child: Center(
           child: ScaleTransition(
-            scale: Tween(begin: 0.0, end: 5.0).animate(
+            scale: Tween(begin: 0.0, end: 4.0).animate(
               CurvedAnimation(
                 parent: _controller,
                 curve: Curves.bounceOut,
